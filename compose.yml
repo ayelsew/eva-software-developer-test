@@ -6,7 +6,10 @@ services:
     image: mongo
     restart: always
     ports:
-      - "3306:3306"
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: password
   mq:
     container_name: eva_redis
     image: redis
