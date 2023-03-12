@@ -10,9 +10,30 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: admin
       MONGO_INITDB_ROOT_PASSWORD: password
+    networks:
+      - mongo-compose-network
+
+  db_ui:
+    container_name: eva_mongo_ui
+    image: mongo-express
+    restart: always
+    ports:
+      - "8081:8081"
+    environment:
+      ME_CONFIG_MONGODB_AUTH_USERNAME: admin
+      ME_CONFIG_MONGODB_AUTH_PASSWORD: password
+      ME_CONFIG_MONGODB_SERVER: db
+    links:
+      - db
+    networks:
+      - mongo-compose-network
   mq:
     container_name: eva_redis
     image: redis
     restart: always
     ports:
       - "6379:6379"
+
+networks:
+  mongo-compose-network:
+    driver: bridge
