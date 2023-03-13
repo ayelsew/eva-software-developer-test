@@ -25,6 +25,7 @@ const FormJourney: FC<FormJourneyProps> = ({ values, employeeEmail, onSave, empl
     type: undefined,
     content: {}
   })
+  const [view, setView] = useState({ journey: 0, action: 0 })
 
   useEffect(() => {
     setJourneyData(values.reverse())
@@ -105,7 +106,7 @@ const FormJourney: FC<FormJourneyProps> = ({ values, employeeEmail, onSave, empl
                   <option value="SEND_EMAIL">Enviar mensagem por Email</option>
                 </>
               </Dropdown>
-              <TextArea label="Mensagem" size="h-32" onChange={(body) => setTmpEditJounery((info) => ({ ...info, content: { ...info.content, body } }))} />
+              <TextArea label="Mensagem" size="h-32" onChange={(body) => setTmpEditJounery((info) => ({ ...info, content: { ...info.content, body } }))} ></TextArea>
               <div className="flex gap-4 mt-2">
                 <span className={!(tmpEditJourney.type && Object.keys(tmpEditJourney.content).length) ? "hidden" : "block"}>
                   <Button
@@ -128,7 +129,7 @@ const FormJourney: FC<FormJourneyProps> = ({ values, employeeEmail, onSave, empl
               <CardJourney
                 key={`${payload}${type}`}
                 type={type}
-                status={ false }
+                status={false}
                 actions={
                   <>
                     <Button label="remover" color="bg-red-800" onClick={() => undefined} />
@@ -155,11 +156,11 @@ const FormJourney: FC<FormJourneyProps> = ({ values, employeeEmail, onSave, empl
       </div>
       {newJourney ? renderForm() : null}
       <div className="mb-8 w-full">
-        {journeyData.map(({ actions, _id, scheduled, finishedAt, createdAt }, index) => (
+        {journeyData.map(({ actions, _id, scheduled, finishedAt, createdAt }, indexJourney) => (
           <div key={_id}>
             <div className="flex justify-between px-8 mb-4 mt-4">
               <div className="flex gap-4">
-                <span>#{index + 1}</span>
+                <span>#{indexJourney + 1}</span>
                 <span>Criado em: <time>{parseDDMMYYYY(createdAt)}</time></span>
                 <span>Agendado para: <time>{parseDDMMYYYY(scheduled, true)}</time></span>
               </div>
@@ -168,15 +169,32 @@ const FormJourney: FC<FormJourneyProps> = ({ values, employeeEmail, onSave, empl
               </div>
             </div>
             {
-              showJourney ?
+              showJourney && view.journey === indexJourney ?
                 <div className="px-8 py-4 mb-4 flex flex-col gap-2 bg-white rounded-lg block">
-                  <Dropdown label="Tipo de ação" onChange={() => undefined} >
+                  <Dropdown label="Tipo de ação" disabled defaultValue={journeyData[view.journey].actions[view.action].type} onChange={() => undefined} >
                     <>
-                      <option value="SEND_WHATSAPP">Enviar mensagem por Whatsapp</option>
-                      <option value="SEND_EMAIL">Enviar mensagem por Email</option>
+                      <option
+                        value="SEND_WHATSAPP"
+                      >
+                        Enviar mensagem por Whatsapp
+                      </option>
+                      <option
+                        value="SEND_EMAIL"
+                      >
+                        Enviar mensagem por Email
+                      </option>
                     </>
                   </Dropdown>
-                  <TextArea label="Mensagem" size="h-32" onChange={() => undefined} />
+                  <TextArea
+                    label="Mensagem"
+                    size="h-32"
+                    onChange={() => undefined}
+                    disabled
+                    defaultValue={
+                      journeyData[view.journey].actions[view.action].payload?.body ||
+                      journeyData[view.journey].actions[view.action].payload?.message
+                    }
+                  />
                   <div className="flex gap-4 mt-2">
                     <Button label="Fechar" color="bg-red-800" onClick={() => setShowJourney(false)} />
                   </div>
@@ -184,14 +202,17 @@ const FormJourney: FC<FormJourneyProps> = ({ values, employeeEmail, onSave, empl
                 : null
             }
             <div className="grid grid-cols-2 gap-4 justify-items-center px-4">
-              {actions.map(({ id, type, result }) => (
+              {actions.map(({ id, type, result }, indexAction) => (
                 <CardJourney
                   key={`${id}${type}${uuidv4()}`}
                   type={type}
-                  status={ result !== null }
+                  status={result !== null}
                   actions={
                     <>
-                      <Button label="ver" color="bg-blue-600" onClick={() => setShowJourney(true)} />
+                      <Button label="ver" color="bg-blue-600" onClick={() => {
+                        setView({ journey: indexJourney, action: indexAction })
+                        setShowJourney(true)
+                      }} />
                     </>
                   }
                 />
