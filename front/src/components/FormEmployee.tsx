@@ -44,11 +44,11 @@ const FormEmployee: FC<FormEmployeeProps> = ({ hideDisableButton, onSave, onRemo
       </div>
       <div className="flex justify-end">
         <div className="flex gap-4">
-          {hideDisableButton ? null : <Button label="Remove" onClick={() => {if (onRemove) onRemove()}} color="bg-red-200" />}
+          {hideDisableButton ? null : <Button label="Remove" onClick={() => {if (onRemove) onRemove()}} color="bg-red-800" />}
           <Button
             label="Salvar"
             onClick={() => onSave(data)}
-            color="bg-green-200"
+            color="bg-green-800"
           />
         </div>
       </div>

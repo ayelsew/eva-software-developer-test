@@ -42,7 +42,7 @@ const Edit: FC<EditProps> = ({ setPage }) => {
   }, [])
 
   return (
-    <div className="bg-gray-50 h-screen w-1/2 relative flex-col items-center ">
+    <div className="bg-gray-800 h-screen w-1/2 relative flex-col items-center ">
       <div className="h-full w-full overflow-y-auto">
         <div className="px-10 mb-10">
           <FormEmployee
@@ -94,7 +94,7 @@ const Edit: FC<EditProps> = ({ setPage }) => {
       </div>
 
       <div className="absolute right-10 bottom-10">
-        <ButtonRounded label="<" color="bg-blue-100" onClick={() => setPage("home")} />
+        <ButtonRounded label="<" color="bg-blue-800" onClick={() => setPage("home")} />
       </div>
     </div>
   )

@@ -10,7 +10,7 @@ interface CardJourneyProps {
 
 const CardJourney: FC<CardJourneyProps> = ({ actions, type, status }) => {
   return (
-    <div className="bg-white rounded-lg block w-max">
+    <div className="bg-neutral-900 rounded-lg block w-max">
       <div className="flex p-4 gap-4">
         <div className="flex flex-col p-4">
           <span>{type === "SEND_EMAIL" ? "Envio de email" : "Envio de whatsapp"}</span>

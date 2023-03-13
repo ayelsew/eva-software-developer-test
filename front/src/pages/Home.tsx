@@ -23,7 +23,7 @@ const Home: FC<HomeProps> = ({ setPage }) => {
   }, [])
 
   return (
-    <div className="bg-gray-50 h-screen w-1/2 flex flex-col items-center relative">
+    <div className="bg-gray-800 h-screen w-1/2 flex flex-col items-center relative">
       <div className="px-10 w-full overflow-y-auto">
         <h2 className="mb-8 border-b-2 border-gray-600 text-3xl mt-4 pb-2 px-4 w-full">
           Colaboradores cadastrados
@@ -43,7 +43,7 @@ const Home: FC<HomeProps> = ({ setPage }) => {
         </span>
       </div>
       <div className="absolute right-10 bottom-10">
-        <ButtonRounded label="+" color="bg-blue-100" onClick={() => setPage("create")} />
+        <ButtonRounded label="+" color="bg-blue-800" onClick={() => setPage("create")} />
       </div>
     </div>
   )

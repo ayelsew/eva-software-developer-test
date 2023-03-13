@@ -13,7 +13,7 @@ const Input: FC<InputProps> = ({ type, label, id, onInput, value }) => {
   return (
     <div className="flex flex-col">
       {label ? <label htmlFor={id} className="mb-2 px-2">{label}</label> : null}
-      <input id={id} type={type} className={`py-1 px-6 rounded-full bg-gray-300`} value={value} onChange={({ target: { value } }) => onInput(value)}/>
+      <input id={id} type={type} className={`py-1 px-6 rounded-full bg-gray-600`} value={value} onChange={({ target: { value } }) => onInput(value)}/>
     </div>
   )
 }

@@ -99,7 +99,7 @@ const FormJourney: FC<FormJourneyProps> = ({ values, employeeEmail, onSave, empl
         </div>
         {
           editJourney ?
-            <div className="px-8 py-4 mb-4 flex flex-col gap-2 bg-white rounded-lg block">
+            <div className="px-8 py-4 mb-4 flex flex-col gap-2 bg-neutral-900 rounded-lg block">
               <Dropdown label="Tipo de ação" onChange={(type: "SEND_WHATSAPP" | "SEND_EMAIL") => setTmpEditJounery((info) => ({ ...info, type }))}>
                 <>
                   <option value="">Escolha uma opção</option>
@@ -151,8 +151,8 @@ const FormJourney: FC<FormJourneyProps> = ({ values, employeeEmail, onSave, empl
           Jornada do colaborador
         </h2>
         <div className="flex gap-4">
-          {!newJourney ? <Button label="Adicionar" onClick={() => setNewJourney(true)} color="bg-blue-200" /> : null}
-          {newJourney ? <Button label="Cancelar" onClick={() => setNewJourney(false)} color="bg-red-200" /> : null}
+          {!newJourney ? <Button label="Adicionar" onClick={() => setNewJourney(true)} color="bg-blue-800" /> : null}
+          {newJourney ? <Button label="Cancelar" onClick={() => setNewJourney(false)} color="bg-red-800" /> : null}
         </div>
       </div>
       {newJourney ? renderForm() : null}
@@ -171,7 +171,7 @@ const FormJourney: FC<FormJourneyProps> = ({ values, employeeEmail, onSave, empl
             </div>
             {
               showJourney && view.journey === indexJourney ?
-                <div className="px-8 py-4 mb-4 flex flex-col gap-2 bg-white rounded-lg block">
+                <div className="px-8 py-4 mb-4 flex flex-col gap-2 bg-neutral-900 rounded-lg block">
                   <Dropdown label="Tipo de ação" disabled defaultValue={journeyData[view.journey].actions[view.action].type} onChange={() => undefined} >
                     <>
                       <option
