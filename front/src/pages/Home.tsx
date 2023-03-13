@@ -28,7 +28,7 @@ const Home: FC<HomeProps> = ({ setPage }) => {
         <h2 className="mb-8 border-b-2 border-gray-600 text-3xl mt-4 pb-2 px-4 w-full">
           Colaboradores cadastrados
         </h2>
-        {records.map(({ name, role, email, _id }) => (
+        {!records.length? (<h2>Não há colaboradores cadastrados</h2>) :records.map(({ name, role, email, _id }) => (
           <ListItem
             key={email}
             onShow={() => {

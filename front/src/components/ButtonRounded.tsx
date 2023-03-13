@@ -9,7 +9,7 @@ interface ButtonRoundedProps {
 
 const ButtonRounded: FC<ButtonRoundedProps> = ({ label, color, onClick }) => {
   return (
-    <button type="button" className={`rounded-full h-16 w-16 flex items-center justify-center ${color}`} onClick={onClick}>
+    <button type="button" className={`rounded-full h-16 w-16 flex items-center justify-center text-5xl ${color}`} onClick={onClick}>
       {label}
     </button>
   )
