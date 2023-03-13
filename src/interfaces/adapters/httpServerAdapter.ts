@@ -1,3 +1,4 @@
+import { resolve } from "path"
 import { HttpServer, Method, Handler, Middleware } from "@/core/ports/HttpServer";
 import express from "express"
 
@@ -7,6 +8,8 @@ export default function httpServerAdapter(port: number, callback?: () => void): 
   server.use(express.urlencoded({ extended: true }))
 
   server.listen(port, callback);
+
+  server.use("/", express.static(resolve("front/dist")))
 
   /**
    * 
