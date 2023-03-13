@@ -32,7 +32,13 @@ const Edit: FC<EditProps> = ({ setPage }) => {
       if (!keyErros.length) return setEmployeeData(employeeDTO(data || {}))
       return setStatusEmployee({ color: "bg-red-400", message })
     })
-    getJourneys()
+    const id = setInterval(() => {
+      getJourneys()
+    }, 1000 * 60)
+    
+    return () => {
+      clearInterval(id)
+    }
   }, [])
 
   return (
