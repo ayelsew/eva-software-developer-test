@@ -9,7 +9,7 @@ You could import a document collection inside `docs` directory to your [postman]
 ## How to setup
 
 ### 1) **installing dependencies**
-Before working on this project, you need to install de dependecies:
+Before working on this project, you need to install dependecies:
 
 ```bash
 yarn
@@ -48,7 +48,7 @@ Server on localhost:3000
 If you want to run front end and back end both in development with hot reload, you will need two terminals
 ```bash
 # console 1
-yarn front:build
+yarn front:dev
 
 # console 2
 yarn dev
