@@ -1,9 +1,9 @@
-import EmployeeDAO from "../ports/EmployeeDAO";
+import ResourceDAO from "../ports/ResourceDAO";
 import { EmployeeAttributes, EmployeeEntity } from "../domain/entities/employeeEntity";
 import employeeManagerError from "./errors/employeeManagerError";
 
 type Response = Promise<{ payload?: any, status?: number }>
-type EmployeeManager = <EA extends EmployeeAttributes>(dao: EmployeeDAO<EmployeeAttributes>, entity: EmployeeEntity) => {
+type EmployeeManager = <EA extends EmployeeAttributes>(dao: ResourceDAO<EmployeeAttributes>, entity: EmployeeEntity) => {
   insert(data: EA): Response
   find(id: string): Response
   update(id: string, data: EA): Response

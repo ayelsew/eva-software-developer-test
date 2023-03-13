@@ -1,7 +1,7 @@
 jest.mock("express");
 
 import express, { Express } from "express"
-import HttpServerAdapter from "@/adapters/HttpServerAdapter"
+import HttpServerAdapter from "@/interfaces/adapters/httpServerAdapter"
 
 describe("Test adapter HttpServer", () => {
 

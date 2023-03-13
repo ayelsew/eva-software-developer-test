@@ -1,11 +1,42 @@
 import Validation from "@/core/ports/Validation";
 import Joi from "joi"
 
+/**
+ * 
+ * Função de recursividade para traduzir os método abstratos para os metodos do Joi 
+ * !!! Algum dia irei refatorar esse inferno. Tenho fé !!! 
+ */
+
+function validationToJoi(schema: Record<string, ReturnType<Validation["_schema"]>>) {
+    let copy: Record<string, ReturnType<Validation["_schema"]>> = {};
+    Object.keys(schema).forEach((name) => {
+
+        if (Array.isArray(schema[name]._acumulator)) {
+            //@ts-ignore
+            const validations = schema[name]._acumulator.map(({ _acumulator }) =>  validationToJoi(_acumulator))
+            
+            //@ts-ignore
+            copy[name] = Joi.array().items(...validations)
+            return;
+        } 
+
+        if (!(typeof schema[name]?._acumulator?.type === "string")) {
+            //@ts-ignore
+            copy[name] = validationToJoi(schema[name]._acumulator)
+            return;
+        }
+        
+        copy[name] = schema[name]._acumulator
+    })
+    return copy
+}
+
 const validation: Validation = {
     _acumulator: undefined,
     _schema() {
         const builder = (name: string, value: any) => {
-            this._acumulator = this._acumulator[name](value)
+            if (!Array.isArray(this._acumulator))
+                this._acumulator = this._acumulator[name](value)
             return this._schema()
         };
 
@@ -44,10 +75,21 @@ const validation: Validation = {
         this._acumulator = Joi.any().forbidden()
         return this._schema()
     },
+    array(...items) {
+        if (items.length) this._acumulator = items
+        else this._acumulator = Joi.array()
+        return this._schema()
+    },
+    object(obj) {
+        this._acumulator = obj
+        return this._schema()
+    },
+    valid(...items) {
+        this._acumulator = Joi.any().valid(...items)
+        return this._schema()
+    },
     validate(data: any, schema: Record<string, ReturnType<Validation["_schema"]>>, presence?: "required" | "optional") {
-        let copy: Record<string, ReturnType<Validation["_schema"]>> = {};
-
-        Object.keys(schema).forEach((name) => copy[name] = schema[name]._acumulator)
+        let copy: Record<string, ReturnType<Validation["_schema"]>> = validationToJoi(schema);
 
         const { error } = Joi.object(copy).validate(data, { abortEarly: false, presence })
 

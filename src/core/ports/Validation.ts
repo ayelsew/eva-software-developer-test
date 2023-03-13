@@ -21,4 +21,7 @@ export default interface Validation {
   boolean(): Validators<Validation>
   forbidden(): Validators<Validation>
   phone(): Validators<Validation>
+  array(...items: Validators<Validation>[]): Validators<Validation>
+  object(obj: Record<string, Validators<Validation>>): Validators<Validation>
+  valid(...items: (string | number)[]): Validators<Validation>
 }

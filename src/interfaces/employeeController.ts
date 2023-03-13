@@ -1,7 +1,7 @@
 import { HttpServer } from "@/core/ports/HttpServer";
 import { EmployeeManagerReturn as EmployeeManager } from "@/core/usecase/employeeManager";
 
-export default function httpController(httpServer: HttpServer, employeeManager: EmployeeManager) {
+export default function employeeController(httpServer: HttpServer, employeeManager: EmployeeManager) {
 
     httpServer.register("post", "/employee", async (request, response) => {
         const { status, payload } = await employeeManager.insert(request.body);
