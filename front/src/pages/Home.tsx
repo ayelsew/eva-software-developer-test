@@ -11,14 +11,14 @@ interface HomeProps {
 }
 
 const Home: FC<HomeProps> = ({ setPage }) => {
+  const [status, setStatus] = useState({ color: "", message: "" })
   const [records, setRecords] = useState<EmployeeDTO[]>([])
   const employeeHandler = useCallback(() => employee(httpClientAdapter()), [])
 
-
   useEffect(() => {
-    employeeHandler().getAll().then(({ data, keyErros }) => {
-      console.log(data)
+    employeeHandler().getAll().then(({ data, keyErros, message }) => {
       if (!keyErros.length) return setRecords(data?.reverse() || [])
+      return setStatus({ color: "bg-red-400", message })
     })
   }, [])
 
@@ -29,8 +29,11 @@ const Home: FC<HomeProps> = ({ setPage }) => {
           Colaboradores cadastrados
         </h2>
         {records.map(({ name, role, email }) => (
-          <ListItem key={email} onShow={() => setPage("edit")}  name={name} role={role}/>
+          <ListItem key={email} onShow={() => setPage("edit")} name={name} role={role} />
         ))}
+        <span className={`${status.color} flex px-4 py-2 rounded-lg`}>
+          {status.message}
+        </span>
       </div>
       <div className="absolute right-10 bottom-10">
         <ButtonRounded label="+" color="bg-blue-100" onClick={() => setPage("create")} />
