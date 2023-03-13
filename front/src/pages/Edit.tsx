@@ -35,7 +35,7 @@ const Edit: FC<EditProps> = ({ setPage }) => {
     const id = setInterval(() => {
       getJourneys()
     }, 1000 * 60)
-    
+    getJourneys()
     return () => {
       clearInterval(id)
     }
