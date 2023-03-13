@@ -24,7 +24,7 @@ const Create: FC<Create> = ({ setPage }) => {
             setTimeout(() => setPage("home"), 2000)
           })} />
         </div>
-        <span className={`${status.color} flex px-4 py-2 rounded-lg`}>
+        <span className={`${status.color} flex px-4 py-2 rounded-lg mt-4`}>
           {status.message}
         </span>
       </div>

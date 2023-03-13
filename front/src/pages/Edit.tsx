@@ -36,8 +36,13 @@ const Edit: FC<EditProps> = ({ setPage }) => {
               setStatusEmployee({ color: "bg-green-800", message })
               setTimeout(() => setPage("home"), 2000)
             })}
+            onRemove={() => employeeHandler().delete(employeeData._id).then(({ keyErros, message }) => {
+              if (keyErros.length) return setStatusEmployee({ color: "bg-red-400", message })
+              setStatusEmployee({ color: "bg-green-800", message })
+              setTimeout(() => setPage("home"), 2000)
+            })}
           />
-          <span className={`${statusEmployee.color} flex px-4 py-2 rounded-lg`}>
+          <span className={`${statusEmployee.color} flex px-4 py-2 rounded-lg mt-4`}>
             {statusEmployee.message}
           </span>
         </div>

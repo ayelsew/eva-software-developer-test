@@ -76,6 +76,21 @@ const employee = (httpClient: HttpClient) => {
         message: response.body?.message,
         keyErros: response.body?.errors || [{}]
       };
+    },
+    async delete(id: string): Promise<RequestDTO<undefined>> {
+      const response = await httpClient.delete(`${PATH}/${id}`);
+
+      if (response.status === 204) return {
+        data: undefined,
+        message: "Removido.",
+        keyErros: []
+      };
+
+      return {
+        data: undefined,
+        message: response.body?.message,
+        keyErros: response.body?.errors || [{}]
+      };
     }
   }
 }

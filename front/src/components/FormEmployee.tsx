@@ -6,11 +6,12 @@ import Input from "./Input";
 
 interface FormEmployeeProps {
   hideDisableButton?: boolean
-  onSave(data: EmployeeDTO): void,
+  onSave(data: EmployeeDTO): void
+  onRemove?: () => void
   values?: EmployeeDTO
 }
 
-const FormEmployee: FC<FormEmployeeProps> = ({ hideDisableButton, onSave, values }) => {
+const FormEmployee: FC<FormEmployeeProps> = ({ hideDisableButton, onSave, onRemove, values }) => {
   const [data, setData] = useState<EmployeeDTO>(employeeDTO({}))
 
   useEffect(() => {
@@ -43,7 +44,7 @@ const FormEmployee: FC<FormEmployeeProps> = ({ hideDisableButton, onSave, values
       </div>
       <div className="flex justify-end">
         <div className="flex gap-4">
-          {hideDisableButton ? null : <Button label="Desativar" onClick={() => undefined} color="bg-red-200" />}
+          {hideDisableButton ? null : <Button label="Remove" onClick={() => {if (onRemove) onRemove()}} color="bg-red-200" />}
           <Button
             label="Salvar"
             onClick={() => onSave(data)}
