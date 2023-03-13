@@ -72,31 +72,33 @@ const journeyHandler = (
       }
     }
 
-    const result = await journeyDAO.find({ employeeId: id })
+    const results = await journeyDAO.find({ employeeId: id })
 
-    if (!result.length) {
+    if (!results.length) {
       return {
         status: 404,
         payload: []
       }
     }
-    
-    const actions = result[0].actions.map(async ({ type, id, payload }) => {
-      
-      const status = await registerJourney.statusAction(type, id as string)
+
+    const response = results.map(async (result) => {
+      const actions = await Promise.all(result.actions.map( async ({ type, id, payload }) => {
+        const status = await registerJourney.statusAction(type, id as string)
+        return {
+          ...(status || {}),
+          payload
+        }
+      }))
 
       return {
-        ...(status || {}),
-        payload
-      }
+        ...result,
+        actions: actions
+      } 
     })
 
     return {
       status: 200,
-      payload: {
-        ...result[0],
-        actions: await Promise.all(actions)
-      }
+      payload: await Promise.all(response)
     }
 
   }
