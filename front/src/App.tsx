@@ -7,7 +7,7 @@ import Home from './pages/Home'
 
 
 function App() {
-  const [page, setPage] = useState<"home" | "edit" | "create" | string>("edit")
+  const [page, setPage] = useState<"home" | "edit" | "create" | string>("home")
 
   const renderPage = useMemo(() => {
     switch (page) {

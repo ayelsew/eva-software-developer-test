@@ -24,7 +24,20 @@ const employee = (httpClient: HttpClient) => {
         keyErros: []
       };
 
-      console.log(response.body)
+      return {
+        data: undefined,
+        message: response.body?.message,
+        keyErros: response.body?.errors || [{}]
+      };
+    },
+    async getAll(): Promise<RequestDTO<EmployeeDTO[]>> {
+      const response = await httpClient.get(PATH);
+      if (response.status === 200) return {
+        data: response.body || [],
+        message: response.body?.message,
+        keyErros: []
+      };
+
       return {
         data: undefined,
         message: response.body?.message,
