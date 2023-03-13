@@ -1,4 +1,10 @@
-# API in hexagonal architecture
+# Test - API in hexagonal architecture
+
+![alt text](./docs/Arquitetura-Hexagonal.png)
+
+## About endpoints API documentation
+
+You could import a document collection inside `docs` directory to your [postman](https://www.postman.com/downloads/?utm_source=postman-home) program
 
 ## How to setup
 
@@ -27,9 +33,9 @@ ext install ms-azuretools.vscode-docker
 ```
 
 ### 3) **Running for development**
-You can run for development with hot reload
+You can run backend for development with hot reload
 ```bash
-yarn dev
+yarn front:build && yarn dev
 ```
 You must see something like this:
 ```bash
@@ -37,6 +43,15 @@ You must see something like this:
 [nodemon] starting `ts-node ./src/main.ts`
 [nodemon] clean exit - waiting for changes before restart
 Server on localhost:3000
+```
+
+If you want to run front end and back end both in development with hot reload, you will need two terminals
+```bash
+# console 1
+yarn front:build
+
+# console 2
+yarn dev
 ```
 
 ### 3) **Execute tests**
