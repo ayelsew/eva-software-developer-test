@@ -27,7 +27,7 @@ const FormJourney: FC<FormJourneyProps> = ({ values, employeeEmail, onSave, empl
   })
 
   useEffect(() => {
-    setJourneyData(values)
+    setJourneyData(values.reverse())
   }, [values])
 
   const parseDDMMYYYY = useCallback((timestamp: number, full?: boolean) => {
@@ -124,9 +124,11 @@ const FormJourney: FC<FormJourneyProps> = ({ values, employeeEmail, onSave, empl
         }
         {newJourneyData.actions.length ? (
           <div className="grid grid-cols-2 gap-4 justify-items-center px-10">
-            {newJourneyData.actions.map(({ payload, type }) => (
+            {newJourneyData.actions.map(({ payload, type, result }) => (
               <CardJourney
                 key={`${payload}${type}`}
+                type={type}
+                status={ false }
                 actions={
                   <>
                     <Button label="remover" color="bg-red-800" onClick={() => undefined} />
@@ -181,10 +183,12 @@ const FormJourney: FC<FormJourneyProps> = ({ values, employeeEmail, onSave, empl
                 </div>
                 : null
             }
-            <div className="grid grid-cols-3 gap-4 justify-items-center px-4">
-              {actions.map(({ id, type, }) => (
+            <div className="grid grid-cols-2 gap-4 justify-items-center px-4">
+              {actions.map(({ id, type, result }) => (
                 <CardJourney
                   key={`${id}${type}${uuidv4()}`}
+                  type={type}
+                  status={ result !== null }
                   actions={
                     <>
                       <Button label="ver" color="bg-blue-600" onClick={() => setShowJourney(true)} />

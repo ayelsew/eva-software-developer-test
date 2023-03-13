@@ -6,7 +6,7 @@ function journeyDAO(database: DataBaseNoSQL<JourneyAttributes>): ResourceDAO<Jou
   const COLLECTION = "journey"
 
   const insert = async (data: JourneyAttributes) => {
-    const resut = await database.useCollection(COLLECTION).create([{ ...data, finishedAt: undefined }]);
+    const resut = await database.useCollection(COLLECTION).create([{ ...data, finishedAt: undefined, createdAt: Date.now() }]);
     return resut;
   }
   const find = async (filter: Filter<JourneyAttributes>, deleted?: boolean) => {
