@@ -13,9 +13,10 @@ interface FormJourneyProps {
   employeeEmail: string
   employeeId: string
   onSave(data: JourneyDTO): Promise<void>
+  onRemove(journeyId: string): void
 }
 
-const FormJourney: FC<FormJourneyProps> = ({ values, employeeEmail, onSave, employeeId }) => {
+const FormJourney: FC<FormJourneyProps> = ({ values, employeeEmail, onSave, employeeId, onRemove }) => {
   const [journeyData, setJourneyData] = useState<JourneyDTO[]>([])
   const [newJourneyData, setNewJourneyData] = useState<JourneyDTO>(journeyDTO({}))
   const [editJourney, setEditJourney] = useState<boolean>(true)
@@ -156,7 +157,7 @@ const FormJourney: FC<FormJourneyProps> = ({ values, employeeEmail, onSave, empl
       </div>
       {newJourney ? renderForm() : null}
       <div className="mb-8 w-full">
-        {journeyData.map(({ actions, _id, scheduled, finishedAt, createdAt }, indexJourney) => (
+        {!journeyData.length ? (<h2>Não há jornadas cadastradas</h2>) :journeyData.map(({ actions, _id, scheduled, finishedAt, createdAt }, indexJourney) => (
           <div key={_id}>
             <div className="flex justify-between px-8 mb-4 mt-4">
               <div className="flex gap-4">
@@ -165,7 +166,7 @@ const FormJourney: FC<FormJourneyProps> = ({ values, employeeEmail, onSave, empl
                 <span>Agendado para: <time>{parseDDMMYYYY(scheduled, true)}</time></span>
               </div>
               <div className="flex gap-4">
-                <Button label="Apagar" onClick={() => undefined} color="bg-red-800" />
+                <Button label="Apagar" onClick={() => onRemove(_id)} color="bg-red-800" />
               </div>
             </div>
             {

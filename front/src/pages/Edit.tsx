@@ -23,7 +23,7 @@ const Edit: FC<EditProps> = ({ setPage }) => {
 
   const getJourneys = useCallback(() => {
     journeyHandler().find(window.location.hash.slice(1)).then(({ data, keyErros, message }) => {
-      if (!keyErros.length) return setJourneyData(data || [])
+      return setJourneyData(data || [])
     })
   }, [])
 
@@ -65,6 +65,15 @@ const Edit: FC<EditProps> = ({ setPage }) => {
             employeeEmail={employeeData.name}
             employeeId={employeeData._id}
             onSave={(data) => journeyHandler().insert(data).then(({ keyErros, message }) => {
+              if (keyErros.length) {
+                setStatusJourney({ color: "bg-red-400", message })
+                return Promise.reject()
+              }
+              getJourneys()
+              setStatusJourney({ color: "bg-green-800", message })
+              return;
+            })}
+            onRemove={(id) => journeyHandler().delete(id).then(({ keyErros, message }) => {
               if (keyErros.length) {
                 setStatusJourney({ color: "bg-red-400", message })
                 return Promise.reject()
