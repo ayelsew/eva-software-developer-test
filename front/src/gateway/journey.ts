@@ -32,10 +32,10 @@ const journey = (httpClient: HttpClient) => {
         keyErros: response.body?.errors || [{}]
       };
     },
-    async find(id: string): Promise<RequestDTO<JourneyDTO>> {
+    async find(id: string): Promise<RequestDTO<JourneyDTO[]>> {
       const response = await httpClient.get(`${PATH}/employee/${id}`);
       if (response.status === 200) return {
-        data: response.body,
+        data: response.body || [],
         message: response.body?.message,
         keyErros: []
       };

@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
+import { v4 as uuidv4 } from "uuid"
 import { FC } from "react";
 import journeyDTO, { JourneyDTO } from "../gateway/journeyDTO";
 import Button from "./Button";
@@ -8,14 +9,14 @@ import Input from "./Input";
 import TextArea from "./TextArea";
 
 interface FormJourneyProps {
-  values: JourneyDTO
+  values: JourneyDTO[]
   employeeEmail: string
   employeeId: string
   onSave(data: JourneyDTO): Promise<void>
 }
 
 const FormJourney: FC<FormJourneyProps> = ({ values, employeeEmail, onSave, employeeId }) => {
-  const [journeyData, setJourneyData] = useState<JourneyDTO>(journeyDTO({}))
+  const [journeyData, setJourneyData] = useState<JourneyDTO[]>([])
   const [newJourneyData, setNewJourneyData] = useState<JourneyDTO>(journeyDTO({}))
   const [editJourney, setEditJourney] = useState<boolean>(true)
   const [showJourney, setShowJourney] = useState<boolean>(false)
@@ -29,9 +30,10 @@ const FormJourney: FC<FormJourneyProps> = ({ values, employeeEmail, onSave, empl
     setJourneyData(values)
   }, [values])
 
-  const parseDDMMYYYY = useCallback((timestamp: number) => {
+  const parseDDMMYYYY = useCallback((timestamp: number, full?: boolean) => {
     const date = new Date(timestamp)
-    return `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`
+    const d = `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`
+    return `${d} ${full ? ` ${date.getHours()}:${date.getMinutes()}` : ""}`
   }, [])
 
   const addNewAction = useCallback(() => {
@@ -151,12 +153,13 @@ const FormJourney: FC<FormJourneyProps> = ({ values, employeeEmail, onSave, empl
       </div>
       {newJourney ? renderForm() : null}
       <div className="mb-8 w-full">
-        {journeyData._id ? (
-          <>
-            <div className="flex justify-between px-8 mb-4">
+        {journeyData.map(({ actions, _id, scheduled, finishedAt, createdAt }, index) => (
+          <div key={_id}>
+            <div className="flex justify-between px-8 mb-4 mt-4">
               <div className="flex gap-4">
-                <span>Criado em: <time>13/03/2023</time></span>
-                <span>Agendado para: <time>13/03/2023</time></span>
+                <span>#{index + 1}</span>
+                <span>Criado em: <time>{parseDDMMYYYY(createdAt)}</time></span>
+                <span>Agendado para: <time>{parseDDMMYYYY(scheduled, true)}</time></span>
               </div>
               <div className="flex gap-4">
                 <Button label="Apagar" onClick={() => undefined} color="bg-red-800" />
@@ -179,8 +182,9 @@ const FormJourney: FC<FormJourneyProps> = ({ values, employeeEmail, onSave, empl
                 : null
             }
             <div className="grid grid-cols-3 gap-4 justify-items-center px-4">
-              {journeyData.actions.map(() => (
+              {actions.map(({ id, type, }) => (
                 <CardJourney
+                  key={`${id}${type}${uuidv4()}`}
                   actions={
                     <>
                       <Button label="ver" color="bg-blue-600" onClick={() => setShowJourney(true)} />
@@ -189,8 +193,8 @@ const FormJourney: FC<FormJourneyProps> = ({ values, employeeEmail, onSave, empl
                 />
               ))}
             </div>
-          </>
-        ) : null}
+          </div>
+        ))}
       </div>
     </form>
   )

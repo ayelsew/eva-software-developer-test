@@ -15,7 +15,7 @@ interface EditProps {
 
 const Edit: FC<EditProps> = ({ setPage }) => {
   const [employeeData, setEmployeeData] = useState<EmployeeDTO>(employeeDTO({}));
-  const [journeyData, setJourneyData] = useState<JourneyDTO>(journeyDTO({}));
+  const [journeyData, setJourneyData] = useState<JourneyDTO[]>([]);
   const [statusEmployee, setStatusEmployee] = useState({ color: "", message: "" })
   const [statusJourney, setStatusJourney] = useState({ color: "", message: "" })
   const employeeHandler = useCallback(() => employee(httpClientAdapter()), [])
@@ -23,7 +23,7 @@ const Edit: FC<EditProps> = ({ setPage }) => {
 
   const getJourneys = useCallback(() => {
     journeyHandler().find(window.location.hash.slice(1)).then(({ data, keyErros, message }) => {
-      if (!keyErros.length) return setJourneyData(journeyDTO(data || {}))
+      if (!keyErros.length) return setJourneyData(data || [])
     })
   }, [])
 
