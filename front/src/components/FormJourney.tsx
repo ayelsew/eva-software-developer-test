@@ -1,56 +1,142 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { FC } from "react";
+import journeyDTO, { JourneyDTO } from "../gateway/journeyDTO";
 import Button from "./Button";
 import CardJourney from "./CardJourney";
 import Dropdown from "./Dropdown";
 import Input from "./Input";
 import TextArea from "./TextArea";
 
-const FormJourney: FC = () => {
-  const [editJourney, setEditJourney] = useState<boolean>(false)
+interface FormJourneyProps {
+  values: JourneyDTO
+  employeeEmail: string
+  employeeId: string
+  onSave(data: JourneyDTO): Promise<void>
+}
+
+const FormJourney: FC<FormJourneyProps> = ({ values, employeeEmail, onSave, employeeId }) => {
+  const [journeyData, setJourneyData] = useState<JourneyDTO>(journeyDTO({}))
+  const [newJourneyData, setNewJourneyData] = useState<JourneyDTO>(journeyDTO({}))
+  const [editJourney, setEditJourney] = useState<boolean>(true)
   const [showJourney, setShowJourney] = useState<boolean>(false)
+  const [newJourney, setNewJourney] = useState<boolean>(false)
+  const [tmpEditJourney, setTmpEditJounery] = useState<{ type?: "SEND_WHATSAPP" | "SEND_EMAIL", content: Record<string, any> }>({
+    type: undefined,
+    content: {}
+  })
+
+  useEffect(() => {
+    setJourneyData(values)
+  }, [values])
+
+  const parseDDMMYYYY = useCallback((timestamp: number) => {
+    const date = new Date(timestamp)
+    return `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`
+  }, [])
+
+  const addNewAction = useCallback(() => {
+    if (tmpEditJourney.type === "SEND_EMAIL") {
+      return setNewJourneyData((info) => ({
+        ...info,
+        employeeId: employeeId,
+        actions: [
+          ...info.actions,
+          {
+            type: "SEND_EMAIL",
+            payload: {
+              ...tmpEditJourney.content,
+              from: "systema@teste.com",
+              to: employeeEmail,
+            }
+          }
+        ]
+      }))
+    }
+    setNewJourneyData((info) => ({
+      ...info,
+      employeeId: employeeId,
+      actions: [
+        ...info.actions,
+        {
+          type: "SEND_WHATSAPP",
+          payload: {
+            message: tmpEditJourney.content.body,
+          }
+        }
+      ]
+    }))
+    setTmpEditJounery({ type: undefined, content: {} })
+  }, [tmpEditJourney, employeeEmail, employeeId])
 
   const renderForm = useCallback(() => {
     return (
       <div className="mb-8 w-full">
         <div className="flex justify-between px-8 mb-4">
           <div className="flex gap-4 items-center justify-center">
-       
-              <span> Criado em: </span><time>13/03/2023</time>
-       
-              <span>Agendado para: </span><Input type="datetime-local" />
-            
+
+            <span>Criado em: </span><time>{parseDDMMYYYY(newJourneyData.createdAt)}</time>
+
+            <span>Agendado para: </span><Input type="datetime-local" onInput={(value) => setNewJourneyData((info) => ({ ...info, scheduled: new Date(value).valueOf() }))} />
+
           </div>
           <div className="flex gap-4">
-            <Button label="Cancelar" onClick={() => undefined} color="bg-red-200" />
-            <Button label="Salvar" onClick={() => undefined} color="bg-blue-600" />
+            <Button label="Ação +" onClick={() => setEditJourney(true)} color="bg-blue-600" />
+            <span className={!newJourneyData.scheduled ? "hidden" : undefined}>
+              <Button
+                label="Salvar"
+                onClick={() => {
+                  onSave(newJourneyData).then(() => setNewJourney(false)).catch()
+
+                }}
+                color="bg-blue-600"
+              />
+            </span>
           </div>
         </div>
         {
           editJourney ?
             <div className="px-8 py-4 mb-4 flex flex-col gap-2 bg-white rounded-lg block">
-              <Dropdown label="Tipo de ação" />
-              <TextArea label="Mensagem" size="h-32" />
+              <Dropdown label="Tipo de ação" onChange={(type: "SEND_WHATSAPP" | "SEND_EMAIL") => setTmpEditJounery((info) => ({ ...info, type }))}>
+                <>
+                  <option value="">Escolha uma opção</option>
+                  <option value="SEND_WHATSAPP">Enviar mensagem por Whatsapp</option>
+                  <option value="SEND_EMAIL">Enviar mensagem por Email</option>
+                </>
+              </Dropdown>
+              <TextArea label="Mensagem" size="h-32" onChange={(body) => setTmpEditJounery((info) => ({ ...info, content: { ...info.content, body } }))} />
               <div className="flex gap-4 mt-2">
-                <Button label="Adicionar" color="bg-blue-600" onClick={() => setEditJourney(false)} />
+                <span className={!(tmpEditJourney.type && Object.keys(tmpEditJourney.content).length) ? "hidden" : "block"}>
+                  <Button
+                    label="Adicionar"
+                    color="bg-blue-600"
+                    onClick={() => {
+                      addNewAction()
+                      setEditJourney(false)
+                    }}
+                  />
+                </span>
                 <Button label="Fechar" color="bg-red-800" onClick={() => setEditJourney(false)} />
               </div>
             </div>
             : null
         }
-        <div className="grid grid-cols-3 gap-4 justify-items-center px-10">
-          <CardJourney
-            actions={
-              <>
-                <Button label="Editar" color="bg-blue-600" onClick={() => setEditJourney(true)} />
-                <Button label="remover" color="bg-red-800" onClick={() => undefined} />
-              </>
-            }
-          />
-        </div>
+        {newJourneyData.actions.length ? (
+          <div className="grid grid-cols-2 gap-4 justify-items-center px-10">
+            {newJourneyData.actions.map(({ payload, type }) => (
+              <CardJourney
+                key={`${payload}${type}`}
+                actions={
+                  <>
+                    <Button label="remover" color="bg-red-800" onClick={() => undefined} />
+                  </>
+                }
+              />
+            ))}
+          </div>
+        ) : null}
       </div>
     )
-  }, [editJourney])
+  }, [editJourney, tmpEditJourney, newJourneyData])
 
   return (
     <form className="flex-col items-center">
@@ -59,36 +145,52 @@ const FormJourney: FC = () => {
           Jornada do colaborador
         </h2>
         <div className="flex gap-4">
-          <Button label="Adicionar" onClick={() => undefined} color="bg-blue-200" />
+          {!newJourney ? <Button label="Adicionar" onClick={() => setNewJourney(true)} color="bg-blue-200" /> : null}
+          {newJourney ? <Button label="Cancelar" onClick={() => setNewJourney(false)} color="bg-red-200" /> : null}
         </div>
       </div>
-      {renderForm()}
+      {newJourney ? renderForm() : null}
       <div className="mb-8 w-full">
-        <div className="flex justify-between px-8 mb-4">
-          <div className="flex gap-4">
-            <span>Criado em: <time>13/03/2023</time></span>
-            <span>Agendado para: <time>13/03/2023</time></span>
-          </div>
-          <div className="flex gap-4">
-            <Button label="Apagar" onClick={() => undefined} color="bg-red-800" />
-          </div>
-        </div>
-        {
-          showJourney ?
-            <div className="px-8 py-4 mb-4 flex flex-col gap-2 bg-white rounded-lg block">
-              <Dropdown label="Tipo de ação" />
-              <TextArea label="Mensagem" size="h-32" />
-              <div className="flex gap-4 mt-2">
-                <Button label="Fechar" color="bg-red-800" onClick={() => setShowJourney(false)} />
+        {journeyData._id ? (
+          <>
+            <div className="flex justify-between px-8 mb-4">
+              <div className="flex gap-4">
+                <span>Criado em: <time>13/03/2023</time></span>
+                <span>Agendado para: <time>13/03/2023</time></span>
+              </div>
+              <div className="flex gap-4">
+                <Button label="Apagar" onClick={() => undefined} color="bg-red-800" />
               </div>
             </div>
-            : null
-        }
-        <div className="grid grid-cols-3 gap-4 justify-items-center px-4">
-          <CardJourney actions={<><Button label="ver" color="bg-blue-600" onClick={() => setShowJourney(true)} /></>} />
-          <CardJourney actions={<><Button label="ver" color="bg-blue-600" onClick={() => setShowJourney(true)} /></>} />
-          <CardJourney actions={<><Button label="ver" color="bg-blue-600" onClick={() => setShowJourney(true)} /></>} />
-        </div>
+            {
+              showJourney ?
+                <div className="px-8 py-4 mb-4 flex flex-col gap-2 bg-white rounded-lg block">
+                  <Dropdown label="Tipo de ação" onChange={() => undefined} >
+                    <>
+                      <option value="SEND_WHATSAPP">Enviar mensagem por Whatsapp</option>
+                      <option value="SEND_EMAIL">Enviar mensagem por Email</option>
+                    </>
+                  </Dropdown>
+                  <TextArea label="Mensagem" size="h-32" onChange={() => undefined} />
+                  <div className="flex gap-4 mt-2">
+                    <Button label="Fechar" color="bg-red-800" onClick={() => setShowJourney(false)} />
+                  </div>
+                </div>
+                : null
+            }
+            <div className="grid grid-cols-3 gap-4 justify-items-center px-4">
+              {journeyData.actions.map(() => (
+                <CardJourney
+                  actions={
+                    <>
+                      <Button label="ver" color="bg-blue-600" onClick={() => setShowJourney(true)} />
+                    </>
+                  }
+                />
+              ))}
+            </div>
+          </>
+        ) : null}
       </div>
     </form>
   )

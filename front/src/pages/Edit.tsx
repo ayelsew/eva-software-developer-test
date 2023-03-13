@@ -1,13 +1,13 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { FC } from "react";
 import ButtonRounded from "../components/ButtonRounded";
-import Input from "../components/Input";
-import Button from "../components/Button";
 import FormEmployee from "../components/FormEmployee";
 import FormJourney from "../components/FormJourney";
 import employee from "../gateway/employee";
 import httpClientAdapter from "../infrastructure/httpClientaAdapter";
 import employeeDTO, { EmployeeDTO } from "../employeeDTO";
+import journey from "../gateway/journey";
+import journeyDTO, { JourneyDTO } from "../gateway/journeyDTO";
 
 interface EditProps {
   setPage: (value: "home") => void
@@ -15,14 +15,24 @@ interface EditProps {
 
 const Edit: FC<EditProps> = ({ setPage }) => {
   const [employeeData, setEmployeeData] = useState<EmployeeDTO>(employeeDTO({}));
+  const [journeyData, setJourneyData] = useState<JourneyDTO>(journeyDTO({}));
   const [statusEmployee, setStatusEmployee] = useState({ color: "", message: "" })
+  const [statusJourney, setStatusJourney] = useState({ color: "", message: "" })
   const employeeHandler = useCallback(() => employee(httpClientAdapter()), [])
+  const journeyHandler = useCallback(() => journey(httpClientAdapter()), [])
+
+  const getJourneys = useCallback(() => {
+    journeyHandler().find(window.location.hash.slice(1)).then(({ data, keyErros, message }) => {
+      if (!keyErros.length) return setJourneyData(journeyDTO(data || {}))
+    })
+  }, [])
 
   useEffect(() => {
     employeeHandler().find(window.location.hash.slice(1)).then(({ data, keyErros, message }) => {
       if (!keyErros.length) return setEmployeeData(employeeDTO(data || {}))
       return setStatusEmployee({ color: "bg-red-400", message })
     })
+    getJourneys()
   }, [])
 
   return (
@@ -47,7 +57,24 @@ const Edit: FC<EditProps> = ({ setPage }) => {
           </span>
         </div>
         <div className="px-10">
-          <FormJourney />
+          <span className={`${statusJourney.color} flex px-4 py-2 rounded-lg mt-4`}>
+            {statusJourney.message}
+          </span>
+          <FormJourney
+            values={journeyData}
+            employeeEmail={employeeData.name}
+            employeeId={employeeData._id}
+            onSave={(data) => journeyHandler().insert(data).then(({ keyErros, message }) => {
+              if (keyErros.length) {
+                setStatusJourney({ color: "bg-red-400", message })
+                return Promise.reject()
+              }
+              getJourneys()
+              setStatusJourney({ color: "bg-green-800", message })
+              return;
+            })}
+          />
+
         </div>
       </div>
 
