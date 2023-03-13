@@ -10,7 +10,7 @@ export interface EmployeeAttributes {
   birthday: string,
   createdAt: number,
   deletedAt?: number,
-  active: boolean,
+  role: string
 }
 
 const employeeEntity = factoryEntity<EmployeeAttributes>({
@@ -21,7 +21,7 @@ const employeeEntity = factoryEntity<EmployeeAttributes>({
   birthday: "",
   createdAt: 0,
   deletedAt: undefined,
-  active: false,
+  role: ""
 },
   employeeValidation
 )

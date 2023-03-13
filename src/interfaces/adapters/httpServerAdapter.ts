@@ -1,9 +1,11 @@
 import { resolve } from "path"
 import { HttpServer, Method, Handler, Middleware } from "@/core/ports/HttpServer";
 import express from "express"
+import cors from "cors"
 
 export default function httpServerAdapter(port: number, callback?: () => void): HttpServer {
   const server = express()
+  server.use(cors())
   server.use(express.json())
   server.use(express.urlencoded({ extended: true }))
 

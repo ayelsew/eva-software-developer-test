@@ -8,5 +8,5 @@ export default factoryValidation((test) => ({
     birthday: test.timestamp(),
     createdAt: test.forbidden(),
     deletedAt: test.forbidden(),
-    active: test.boolean()
+    role: test.string()
 }))
