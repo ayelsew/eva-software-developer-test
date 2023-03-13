@@ -1,18 +1,21 @@
-import React, { useCallback, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FC } from "react";
 import employeeDTO, { EmployeeDTO } from "../employeeDTO";
-import employee from "../gateway/employee";
-import httpClientAdapter from "../infrastructure/httpClientaAdapter";
 import Button from "./Button";
 import Input from "./Input";
 
 interface FormEmployeeProps {
   hideDisableButton?: boolean
-  onSave(data: EmployeeDTO): void
+  onSave(data: EmployeeDTO): void,
+  values?: EmployeeDTO
 }
 
-const FormEmployee: FC<FormEmployeeProps> = ({ hideDisableButton, onSave }) => {
+const FormEmployee: FC<FormEmployeeProps> = ({ hideDisableButton, onSave, values }) => {
   const [data, setData] = useState<EmployeeDTO>(employeeDTO({}))
+
+  useEffect(() => {
+    if (values) setData(values)
+  }, [values])
 
   return (
     <form className="flex-col items-center">

@@ -28,8 +28,15 @@ const Home: FC<HomeProps> = ({ setPage }) => {
         <h2 className="mb-8 border-b-2 border-gray-600 text-3xl mt-4 pb-2 px-4 w-full">
           Colaboradores cadastrados
         </h2>
-        {records.map(({ name, role, email }) => (
-          <ListItem key={email} onShow={() => setPage("edit")} name={name} role={role} />
+        {records.map(({ name, role, email, _id }) => (
+          <ListItem
+            key={email}
+            onShow={() => {
+              window.location.hash = _id;
+              setPage("edit")
+            }}
+            name={name} role={role}
+          />
         ))}
         <span className={`${status.color} flex px-4 py-2 rounded-lg`}>
           {status.message}

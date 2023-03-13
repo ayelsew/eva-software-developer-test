@@ -15,7 +15,7 @@ const employee = (httpClient: HttpClient) => {
 
   return {
     async insert(data: Partial<EmployeeDTO>): Promise<RequestDTO<EmployeeDTO>> {
-      delete data.id
+      delete data._id
 
       const response = await httpClient.post(PATH, data);
       if (response.status === 201) return {
@@ -35,6 +35,39 @@ const employee = (httpClient: HttpClient) => {
       if (response.status === 200) return {
         data: response.body || [],
         message: response.body?.message,
+        keyErros: []
+      };
+
+      return {
+        data: undefined,
+        message: response.body?.message,
+        keyErros: response.body?.errors || [{}]
+      };
+    },
+    async find(id: string): Promise<RequestDTO<EmployeeDTO>> {
+      const response = await httpClient.get(`${PATH}/${id}`);
+      if (response.status === 200) return {
+        data: response.body,
+        message: response.body?.message,
+        keyErros: []
+      };
+
+      return {
+        data: undefined,
+        message: response.body?.message,
+        keyErros: response.body?.errors || [{}]
+      };
+    },
+    async update(id: string, data: Partial<EmployeeDTO>): Promise<RequestDTO<undefined>> {
+      delete data._id
+      delete data.createdAt
+      delete data.deletedAt
+
+      const response = await httpClient.patch(`${PATH}/${id}`, data);
+
+      if (response.status === 204) return {
+        data: undefined,
+        message: "Atualizado.",
         keyErros: []
       };
 

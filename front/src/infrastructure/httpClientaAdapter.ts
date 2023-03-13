@@ -23,7 +23,7 @@ const httpClientAdapter = (): HttpClient => {
       }
     },
     async patch(path, payload) {
-      const response = await instance.get(path, payload);
+      const response = await instance.patch(path, payload);
       return {
         status: response.status,
         body: response.data
