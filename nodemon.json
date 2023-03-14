@@ -1,5 +1,13 @@
 {
   "execMap": {
     "ts": "ts-node -r tsconfig-paths/register"
+  },
+  "env": {
+    "NODE_ENV": "development",
+    "TZ": "America/Sao_Paulo",
+    "HTTP": 3000,
+    "REDIS": "redis://localhost:6379",
+    "MONGO": "mongodb://admin:password@localhost:27017",
+    "MONGODB": "eva"
   }
 }
